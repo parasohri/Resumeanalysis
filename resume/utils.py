@@ -1,8 +1,11 @@
 from PyPDF2 import PdfReader
-import google.generativeai as genai
+from google import genai
 from django.conf import settings
 import json
 import re
+
+
+# ---------------- PDF TEXT EXTRACTION ----------------
 def extract_text_from_pdf(file):
     reader = PdfReader(file)
     text = ""
@@ -10,16 +13,18 @@ def extract_text_from_pdf(file):
     for page in reader.pages:
         text += page.extract_text() or ""
 
-    # Explicit cleanup
     file.close()
-
     return text
-genai.configure(api_key=settings.GEMINI_API_KEY)
 
 
+# ---------------- GEMINI CLIENT (NEW SDK) ----------------
+client = genai.Client(
+    api_key=settings.GEMINI_API_KEY
+)
+
+
+# ---------------- RESUME ANALYSIS ----------------
 def analyze_resume_with_ai(resume_text: str, job_description: str):
-    model = genai.GenerativeModel("gemini-2.5-flash-lite")
-
     prompt = f"""
 You are an expert ATS system and senior technical interviewer.
 
@@ -39,10 +44,10 @@ Your tasks:
 5. Generate expected interview questions based on BOTH resume and job description
 
 Interview questions must include:
-- Technical questions (core skills, tools, frameworks)
-- Project-based questions (from resume projects)
-- Behavioral questions (teamwork, problem-solving)
-- Gap-focused questions (missing or weak skills)
+- Technical questions
+- Project-based questions
+- Behavioral questions
+- Gap-focused questions
 
 Return ONLY valid JSON in the following format:
 {{
@@ -58,21 +63,30 @@ Return ONLY valid JSON in the following format:
   }}
 }}
 
-Do NOT include any explanations, markdown, or extra text.
+Do NOT include explanations, markdown, or extra text.
 """
 
-
-    response = model.generate_content(prompt)
-
-    raw_text = response.text.strip()
-
-    # 🔥 Gemini sometimes adds ```json ``` – clean it
-    cleaned = re.sub(r"```json|```", "", raw_text).strip()
-
     try:
+        response = client.models.generate_content(
+            model="gemini-2.5-flash-lite",
+            contents=prompt,
+        )
+
+        raw_text = response.text.strip()
+
+        # Clean ```json wrappers if Gemini adds them
+        cleaned = re.sub(r"```json|```", "", raw_text).strip()
+
         return json.loads(cleaned)
+
     except json.JSONDecodeError:
         return {
             "error": "AI response parsing failed",
             "raw_response": raw_text
+        }
+
+    except Exception as e:
+        return {
+            "error": "Gemini service failed",
+            "details": str(e)
         }

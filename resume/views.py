@@ -25,24 +25,23 @@ class ResumeAnalyzeView(APIView):
         del resume_file
 
        
-        # analysis = analyze_resume_with_ai(
-        #     resume_text=resume_text,
-        #     job_description=job_description
-        # )
+        analysis = analyze_resume_with_ai(
+            resume_text=resume_text,
+            job_description=job_description
+        )
 
         
         if save:
             SavedResumeAnalysis.objects.create(
                 user=request.user,
                 job_description=job_description,
-                # analysis_result=analysis,
+                analysis_result=analysis,
             )
 
         return Response(
             {
-                # "analysis": analysis,
+                "analysis": analysis,
                 "saved": save,
-                "text": resume_text
                  
             },
             status=status.HTTP_200_OK
