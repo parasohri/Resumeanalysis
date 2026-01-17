@@ -42,6 +42,7 @@ class ResumeAnalyzeView(APIView):
             {
                 # "analysis": analysis,
                 "saved": save,
+                "text": resume_text
                  
             },
             status=status.HTTP_200_OK
