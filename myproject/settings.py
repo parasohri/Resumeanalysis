@@ -8,29 +8,42 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Load .env
 load_dotenv(BASE_DIR / ".env")
 
+# ========================
 # SECURITY
+# ========================
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "unsafe-secret-key")
 DEBUG = False
 ALLOWED_HOSTS = ["*"]
 
-# Installed apps
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# ========================
+# INSTALLED APPS
+# ========================
 INSTALLED_APPS = [
     "corsheaders",
+
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
     "rest_framework",
+
     "users",
     "resume",
 ]
 
-# Middleware
+# ========================
+# MIDDLEWARE (ORDER MATTERS)
+# ========================
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # REQUIRED FOR RAILWAY
+    "corsheaders.middleware.CorsMiddleware",
+
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -39,18 +52,26 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+# ========================
 # CORS / CSRF
+# ========================
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://*.railway.app",
+    "https://resumeanalysisbackend-production.up.railway.app",
     "http://localhost:3000",
 ]
 
+# ========================
+# URLS / WSGI
+# ========================
 ROOT_URLCONF = "myproject.urls"
+WSGI_APPLICATION = "myproject.wsgi.application"
 
-# Templates
+# ========================
+# TEMPLATES
+# ========================
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -67,9 +88,9 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "myproject.wsgi.application"
-
-# Database (SQLite is fine for Railway MVP)
+# ========================
+# DATABASE (SQLite OK FOR MVP)
+# ========================
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -77,19 +98,34 @@ DATABASES = {
     }
 }
 
-# DRF
+# ========================
+# DJANGO REST FRAMEWORK
+# ========================
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.AllowAny",
+    ),
 }
 
-# Static files (IMPORTANT FOR RAILWAY)
+# ========================
+# STATIC FILES (RAILWAY FIX)
+# ========================
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# Default PK
+STATICFILES_STORAGE = (
+    "whitenoise.storage.CompressedManifestStaticFilesStorage"
+)
+
+# ========================
+# DEFAULT PRIMARY KEY
+# ========================
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Gemini
+# ========================
+# GEMINI
+# ========================
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
