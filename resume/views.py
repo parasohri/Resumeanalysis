@@ -46,3 +46,10 @@ class ResumeAnalyzeView(APIView):
             },
             status=status.HTTP_200_OK
         )
+class SavedResumeListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        resumes = SavedResumeAnalysis.objects.filter(user=request.user).order_by('-created_at')
+        serializer = ResumeAnalyzeSerializer(resumes, many=True)
+        return Response(serializer.data)
