@@ -56,8 +56,12 @@ MIDDLEWARE = [
 # ========================
 # CORS / CSRF
 # ========================
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = False
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
 
 CSRF_TRUSTED_ORIGINS = [
     "https://resumeanalysisbackend-production.up.railway.app",
