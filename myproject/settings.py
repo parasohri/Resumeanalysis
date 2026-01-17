@@ -2,17 +2,19 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Base directory
+# ========================
+# BASE DIR
+# ========================
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-# Load .env
 load_dotenv(BASE_DIR / ".env")
 
 # ========================
 # SECURITY
 # ========================
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "unsafe-secret-key")
-DEBUG = False
+
+DEBUG = True   # 🔹 keep True locally, set False in Railway env if needed
+
 ALLOWED_HOSTS = ["*"]
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
@@ -46,27 +48,37 @@ MIDDLEWARE = [
 
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
+
+    # 🔹 CSRF kept (safe)
     "django.middleware.csrf.CsrfViewMiddleware",
+
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-
 
 # ========================
 # CORS / CSRF
 # ========================
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "https://resumeanalysisbackend-production.up.railway.app",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
 
-
 CSRF_TRUSTED_ORIGINS = [
-    "https://resumeanalysisbackend-production.up.railway.app",
     "http://localhost:3000",
+    "https://resumeanalysisbackend-production.up.railway.app",
 ]
+
+# ========================
+# MEDIA (UPLOADS)
+# ========================
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
+os.makedirs(MEDIA_ROOT, exist_ok=True)
 
 # ========================
 # URLS / WSGI
@@ -94,7 +106,7 @@ TEMPLATES = [
 ]
 
 # ========================
-# DATABASE (SQLite OK FOR MVP)
+# DATABASE
 # ========================
 DATABASES = {
     "default": {
@@ -116,7 +128,7 @@ REST_FRAMEWORK = {
 }
 
 # ========================
-# STATIC FILES (RAILWAY FIX)
+# STATIC FILES (RAILWAY)
 # ========================
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
