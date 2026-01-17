@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from myproject.resume.models import SavedResumeAnalysis
+from .models import SavedResumeAnalysis
 
 class ResumeAnalyzeSerializer(serializers.Serializer):
     file = serializers.FileField()
