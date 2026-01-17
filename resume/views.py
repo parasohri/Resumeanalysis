@@ -6,7 +6,7 @@ from rest_framework import status
 from .models import SavedResumeAnalysis
 from .serializers import ResumeAnalyzeSerializer
 from .utils import extract_text_from_pdf, analyze_resume_with_ai
-
+from .serializers import SavedResumeAnalysisSerializer
 
 class ResumeAnalyzeView(APIView):
     permission_classes = [IsAuthenticated]
