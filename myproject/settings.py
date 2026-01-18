@@ -63,6 +63,7 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://resumeanalysisbackend-production.up.railway.app",
+    "https://resumeanalysisfrontend.vercel.app"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -70,6 +71,7 @@ CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "https://resumeanalysisbackend-production.up.railway.app",
+    "https://resumeanalysisfrontend.vercel.app"
 ]
 
 # ========================
