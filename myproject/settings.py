@@ -2,18 +2,13 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-# ========================
-# BASE DIR
-# ========================
+ 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
-
-# ========================
-# SECURITY
-# ========================
+ 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "unsafe-secret-key")
 
-DEBUG = True   # 🔹 keep True locally, set False in Railway env if needed
+DEBUG = True    
 
 ALLOWED_HOSTS = ["*"]
 
