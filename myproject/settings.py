@@ -1,27 +1,21 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import dj_database_url
 
-# ========================
-# BASE DIR
-# ========================
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 
-# ========================
-# SECURITY
-# ========================
+ 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "unsafe-secret-key")
 
-DEBUG = True   # 🔹 keep True locally, set False in Railway env if needed
+DEBUG = True   
 
 ALLOWED_HOSTS = ["*"]
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-# ========================
-# INSTALLED APPS
-# ========================
+ 
 INSTALLED_APPS = [
     "corsheaders",
 
@@ -37,10 +31,7 @@ INSTALLED_APPS = [
     "users",
     "resume",
 ]
-
-# ========================
-# MIDDLEWARE (ORDER MATTERS)
-# ========================
+ 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "corsheaders.middleware.CorsMiddleware",
@@ -57,9 +48,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-# ========================
-# CORS / CSRF
-# ========================
+ 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://resumeanalysisbackend-production.up.railway.app",
@@ -74,17 +63,13 @@ CSRF_TRUSTED_ORIGINS = [
     "https://resumeanalysisfrontend.vercel.app"
 ]
 
-# ========================
-# MEDIA (UPLOADS)
-# ========================
+ 
+ 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 os.makedirs(MEDIA_ROOT, exist_ok=True)
-
-# ========================
-# URLS / WSGI
-# ========================
+ 
 ROOT_URLCONF = "myproject.urls"
 WSGI_APPLICATION = "myproject.wsgi.application"
 
@@ -107,19 +92,19 @@ TEMPLATES = [
     },
 ]
 
-# ========================
-# DATABASE
-# ========================
+ 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+    'default': dj_database_url.config(
+        default=os.getenv(
+            'DATABASE_URL',
+            f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
+        ),
+        conn_max_age=600,
+    )
 }
 
-# ========================
-# DJANGO REST FRAMEWORK
-# ========================
+
+ 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -129,9 +114,7 @@ REST_FRAMEWORK = {
     ),
 }
 
-# ========================
-# STATIC FILES (RAILWAY)
-# ========================
+ 
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
@@ -139,12 +122,7 @@ STATICFILES_STORAGE = (
     "whitenoise.storage.CompressedManifestStaticFilesStorage"
 )
 
-# ========================
-# DEFAULT PRIMARY KEY
-# ========================
+ 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-# ========================
-# GEMINI
-# ========================
+ 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
